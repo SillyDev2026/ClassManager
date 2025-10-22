@@ -23,8 +23,12 @@ export type Class<T> = {
 	__index: Class<T>,
 	__type: string,
 	__base: Class<T>?,
+	__abstract: boolean?,
+	__mixins: { any }?,
+	__interfaces: {any}?,
 	IsA: (self: T | Class<T>, className: string) -> boolean,
 	GetClassName: (self: T | Class<T>) -> string,
+	__tostring: (self: T | Class<T>) -> string
 }
 
 local Class = {}
@@ -70,7 +74,7 @@ function Class.define<T>(options: ClassOptions): Class<T>
 	local name = options.name or "UnnamedClass"
 	local base = options.base
 	local constructor = options.constructor
-	local class = {} :: any
+	local class = {}
 	class.__index = class
 	class.__type = name
 	class.__base = base
