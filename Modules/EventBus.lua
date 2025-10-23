@@ -35,13 +35,7 @@ function EventBus.new<T...>(): EventBus<T...>
 	return self :: EventBus<T...>
 end
 
--- Create a normal listener
-local function createListener<T...>(
-	callback: EventCallback<T...>,
-	priority: number?,
-	async: boolean?,
-	source: any?
-): NormalListener<T...>
+local function createListener<T...>(callback: EventCallback<T...>,	priority: number?,async: boolean?,source: any?): NormalListener<T...>
 	return {
 		callback = callback,
 		priority = priority or 0,
@@ -50,7 +44,6 @@ local function createListener<T...>(
 	}
 end
 
--- Sort listeners by priority (highest first)
 local function sortListeners<T...>(listeners: {NormalListener<T...>})
 	table.sort(listeners, function(a: NormalListener<T...>, b: NormalListener<T...>)
 		return a.priority > b.priority
@@ -83,13 +76,7 @@ function EventBus:_On<T...>(eventName: string,callback: EventCallback<T...>,prio
 	return connection
 end
 
-function EventBus:_Once<T...>(
-	eventName: string,
-	callback: EventCallback<T...>,
-	priority: number?,
-	async: boolean?,
-	source: any?
-): Signal.Connection<T...>
+function EventBus:_Once<T...>(eventName: string,callback: EventCallback<T...>,priority: number?,async: boolean?,source: any?): Signal.Connection<T...>
 	local connection: Signal.Connection<T...>
 	connection = self:_On(eventName, function(sourceArg: any, ...: T...)
 		connection:Disconnect()
