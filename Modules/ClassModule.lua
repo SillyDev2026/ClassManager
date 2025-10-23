@@ -8,7 +8,7 @@ export type PropertyDef = {
 
 export type ClassOptions = {
 	name: string?,
-	base: any?,
+	base: {init: (self: ClassOptions, typeSelf: any, ...any) -> (), any: any} ,
 	abstract: boolean?,
 	properties: { [string]: PropertyDef }?,
 	static: { [string]: any }?,
@@ -23,12 +23,8 @@ export type Class<T> = {
 	__index: Class<T>,
 	__type: string,
 	__base: Class<T>?,
-	__abstract: boolean?,
-	__mixins: { any }?,
-	__interfaces: {any}?,
 	IsA: (self: T | Class<T>, className: string) -> boolean,
 	GetClassName: (self: T | Class<T>) -> string,
-	__tostring: (self: T | Class<T>) -> string
 }
 
 local Class = {}
@@ -161,7 +157,8 @@ function Class.define<T>(options: ClassOptions): Class<T>
 		end
 
 		for prop, sig in pairs(signals) do
-			typedSelf[prop .. "Changed"] = sig
+			local props = prop:: any .. 'Changed'
+			typedSelf[props] = sig
 		end
 
 		if #class.__interfaces > 0 then
@@ -202,7 +199,7 @@ function Class.define<T>(options: ClassOptions): Class<T>
 		end,
 	})
 
-	return class
+	return class:: T
 end
 
 function Class.new()
