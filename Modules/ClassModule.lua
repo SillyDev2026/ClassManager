@@ -8,7 +8,7 @@ export type PropertyDef = {
 
 export type ClassOptions = {
 	name: string?,
-	base: Class<any>?,
+	base: any?,
 	abstract: boolean?,
 	properties: { [string]: PropertyDef }?,
 	static: { [string]: any }?,
