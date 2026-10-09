@@ -1,4 +1,4 @@
-local Class = require(script.Parent.ClassSystem)
+local Class = require(script.Parent:WaitForChild("ClassModule"))
 
 export type Connection<T...> = {
 	Connected: boolean,
@@ -28,7 +28,7 @@ local Signal = Class.define({
 	end,
 })
 
-function createConnection<T...>(signal: Signal<T...>, callback: (T...) -> ()): Connection<T...>
+local function createConnection<T...>(signal: Signal<T...>, callback: (T...) -> ()): Connection<T...>
 	local connection: Connection<T...>
 	connection = {
 		Connected = true,
@@ -81,7 +81,7 @@ function Signal:Fire<T...>(...: T...)
 		end
 	end
 	for _, thread in ipairs(self._waitingThreads) do
-		task.spawn(coroutine.resume, thread, ...)
+		task.spawn(thread, ...)
 	end
 	table.clear(self._waitingThreads)
 end
@@ -99,6 +99,10 @@ function Signal:Destroy()
 	self._destroyed = true
 	for _, conn in ipairs(self._connections) do
 		conn.Connected = false
+	end
+	-- Do not strand suspended coroutines after teardown.
+	for _, waiting in ipairs(self._waitingThreads) do
+		task.spawn(waiting, nil)
 	end
 	table.clear(self._connections)
 	table.clear(self._waitingThreads)
