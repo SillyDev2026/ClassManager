@@ -86,7 +86,7 @@ function EventBus:_Once<T...>(eventName: string,callback: EventCallback<T...>,pr
 end
 
 function EventBus:_Fire<T...>(eventName: string, source: any?, ...: T...): boolean
-	local listeners: {NormalListener<T...>}? = self._listeners[eventName]
+	local listeners: {NormalListener<T...>}? = if self._listeners[eventName] then table.clone(self._listeners[eventName]) else nil
 	if listeners then
 		for _, listener in ipairs(listeners) do
 			if listener.async then
@@ -98,7 +98,7 @@ function EventBus:_Fire<T...>(eventName: string, source: any?, ...: T...): boole
 		end
 	end
 
-	local wild: {WildListener<T...>}? = self._listeners["*"]:: any
+	local wild: {WildListener<T...>}? = if self._listeners["*"] then table.clone(self._listeners["*"]) :: any else nil
 	if wild then
 		for _, listener in ipairs(wild) do
 			if listener.async then
